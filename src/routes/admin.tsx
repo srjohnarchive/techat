@@ -128,6 +128,7 @@ function AdminPage() {
                     innerRadius={55}
                     outerRadius={90}
                     paddingAngle={2}
+                    isAnimationActive={false}
                   >
                     {data.map((d) => (
                       <Cell key={d.key} fill={chartColors[d.key]} stroke="var(--surface)" />
