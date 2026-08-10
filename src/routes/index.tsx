@@ -141,13 +141,13 @@ function InboxPage() {
                 </button>
               ))}
             </div>
-            <div className="mt-2 flex gap-1.5">
+            <div className="mt-2 grid grid-cols-2 gap-1.5">
               {(["todos", "whatsapp", "webchat", "email"] as const).map((c) => (
                 <button
                   key={c}
                   onClick={() => setChannelFilter(c)}
                   className={cn(
-                    "flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-1.5 text-xs font-medium transition-colors",
+                    X,
                     channelFilter === c
                       ? "border-brand bg-brand-soft text-brand"
                       : "border-border text-muted-foreground hover:text-foreground",
