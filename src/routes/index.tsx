@@ -53,7 +53,7 @@ export const Route = createFileRoute("/")({
 
 function InboxPage() {
   const [list, setList] = useState<Ticket[]>(seedTickets);
-  const [activeId, setActiveId] = useState(seedTickets[0].id);
+  const [activeId, setActiveId] = useState(seedTickets[0]!.id);
   const [statusFilter, setStatusFilter] = useState<TicketStatus | "todos">("todos");
   const [channelFilter, setChannelFilter] = useState<Channel | "todos">("todos");
   const [query, setQuery] = useState("");
@@ -75,7 +75,7 @@ function InboxPage() {
     [list, statusFilter, channelFilter, query],
   );
 
-  const active = list.find((t) => t.id === activeId) ?? filtered[0] ?? list[0];
+  const active = list.find((t) => t.id === activeId) ?? filtered[0] ?? list[0]!;
   const contact = getContact(active.contactId);
   const company = getCompany(contact.companyId);
   const history = pastTickets[contact.id] ?? [];
