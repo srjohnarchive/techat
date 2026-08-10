@@ -10,33 +10,80 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as EmpresasRouteImport } from './routes/empresas'
+import { Route as ContatosIndexRouteImport } from './routes/contatos.index'
+import { Route as ContatosContactIdRouteImport } from './routes/contatos.$contactId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmpresasRoute = EmpresasRouteImport.update({
+  id: '/empresas',
+  path: '/empresas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatosIndexRoute = ContatosIndexRouteImport.update({
+  id: '/contatos/',
+  path: '/contatos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatosContactIdRoute = ContatosContactIdRouteImport.update({
+  id: '/contatos/$contactId',
+  path: '/contatos/$contactId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/empresas': typeof EmpresasRoute
+  '/contatos/$contactId': typeof ContatosContactIdRoute
+  '/contatos/': typeof ContatosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/empresas': typeof EmpresasRoute
+  '/contatos/$contactId': typeof ContatosContactIdRoute
+  '/contatos': typeof ContatosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/empresas': typeof EmpresasRoute
+  '/contatos/$contactId': typeof ContatosContactIdRoute
+  '/contatos/': typeof ContatosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/admin' | '/empresas' | '/contatos/$contactId' | '/contatos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/admin' | '/empresas' | '/contatos/$contactId' | '/contatos'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/empresas'
+    | '/contatos/$contactId'
+    | '/contatos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  EmpresasRoute: typeof EmpresasRoute
+  ContatosContactIdRoute: typeof ContatosContactIdRoute
+  ContatosIndexRoute: typeof ContatosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +95,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empresas': {
+      id: '/empresas'
+      path: '/empresas'
+      fullPath: '/empresas'
+      preLoaderRoute: typeof EmpresasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contatos/': {
+      id: '/contatos/'
+      path: '/contatos'
+      fullPath: '/contatos/'
+      preLoaderRoute: typeof ContatosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contatos/$contactId': {
+      id: '/contatos/$contactId'
+      path: '/contatos/$contactId'
+      fullPath: '/contatos/$contactId'
+      preLoaderRoute: typeof ContatosContactIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  EmpresasRoute: EmpresasRoute,
+  ContatosContactIdRoute: ContatosContactIdRoute,
+  ContatosIndexRoute: ContatosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
