@@ -147,7 +147,7 @@ function InboxPage() {
                   key={c}
                   onClick={() => setChannelFilter(c)}
                   className={cn(
-                    X,
+                    "flex items-center justify-center gap-1.5 rounded-lg border px-2 py-1.5 text-xs font-medium transition-colors",
                     channelFilter === c
                       ? "border-brand bg-brand-soft text-brand"
                       : "border-border text-muted-foreground hover:text-foreground",
