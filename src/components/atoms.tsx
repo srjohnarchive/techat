@@ -9,6 +9,7 @@ const statusStyles: Record<TicketStatus, string> = {
   pendente: "bg-status-pendente-soft text-status-pendente",
   resolvido: "bg-status-resolvido-soft text-status-resolvido",
   nao_resolvido: "bg-status-negado-soft text-status-negado",
+  mesclado: "bg-status-mesclado-soft text-status-mesclado",
 };
 
 export function StatusTag({
