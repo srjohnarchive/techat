@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Inbox, Building2, Users, BarChart3, Headset } from "lucide-react";
+import { Inbox, Building2, Users, BarChart3, Headset, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Initials } from "@/components/atoms";
 
 const nav = [
   { to: "/", label: "Caixa de Entrada", icon: Inbox, exact: true },
+  { to: "/pendencias", label: "Pendências", icon: ListChecks, exact: false },
   { to: "/empresas", label: "Empresas", icon: Building2, exact: false },
   { to: "/contatos", label: "Contatos", icon: Users, exact: false },
   { to: "/admin", label: "Administração", icon: BarChart3, exact: false },
