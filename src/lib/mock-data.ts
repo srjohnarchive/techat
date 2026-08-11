@@ -51,9 +51,9 @@ export type Contact = {
   phone: string;
   email: string;
   companyId: string | null;
-  altPhone?: string;
-  altEmail?: string;
-  unidentified?: boolean;
+  altPhone?: string | undefined;
+  altEmail?: string | undefined;
+  unidentified?: boolean | undefined;
 };
 
 export type Ticket = {
@@ -64,11 +64,11 @@ export type Ticket = {
   status: TicketStatus;
   agent: string;
   openedAt: string;
-  closedAt?: string;
+  closedAt?: string | undefined;
   updatedAt: string;
   waiting: string;
-  kanbanColumn?: string | null;
-  mergedInto?: string;
+  kanbanColumn?: string | null | undefined;
+  mergedInto?: string | undefined;
 };
 
 export type MessageKind = "cliente" | "agente" | "nota" | "sistema";
@@ -81,7 +81,7 @@ export type Message = {
   authorName: string;
   text: string;
   time: string;
-  delivery?: "enviada" | "entregue" | "lida";
+  delivery?: "enviada" | "entregue" | "lida" | undefined;
 };
 
 export type Conversation = {
@@ -92,8 +92,8 @@ export type Conversation = {
   unread: number;
   lastActivity: string;
   /** Horas restantes da janela de 24h do WhatsApp. 0 = expirada. */
-  windowHoursLeft?: number;
-  emailSubject?: string;
+  windowHoursLeft?: number | undefined;
+  emailSubject?: string | undefined;
 };
 
 export const companies: Company[] = [
@@ -575,7 +575,7 @@ export type ChannelIntegration = {
   type: string;
   identifier: string;
   connected: boolean;
-  phase2?: boolean;
+  phase2?: boolean | undefined;
 };
 
 export const channelIntegrations: ChannelIntegration[] = [
