@@ -251,7 +251,7 @@ function InboxPage() {
           <section className="flex min-h-0 flex-col">
             <header className="flex flex-wrap items-center gap-2 border-b border-border bg-surface px-4 py-3 sm:px-6">
               <Initials name={current.contact.name} />
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 basis-40">
                 <p className="truncate text-sm font-semibold">{current.contact.name}</p>
                 <p className="truncate text-xs text-muted-foreground">
                   {current.company?.name ?? "Visitante não identificado"}
@@ -261,7 +261,7 @@ function InboxPage() {
               <button
                 onClick={() => setTicketDrawer(true)}
                 title="Trocar assunto ou criar ticket"
-                className="inline-flex max-w-[280px] items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                className="inline-flex min-w-0 max-w-[280px] shrink items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-accent"
               >
                 <TicketIcon className="h-3.5 w-3.5 shrink-0 text-brand" />
                 <span className="truncate">
