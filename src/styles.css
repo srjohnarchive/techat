@@ -73,6 +73,11 @@
   --color-status-resolvido-soft: var(--status-resolvido-soft);
   --color-status-negado: var(--status-negado);
   --color-status-negado-soft: var(--status-negado-soft);
+  --color-status-mesclado: var(--status-mesclado);
+  --color-status-mesclado-soft: var(--status-mesclado-soft);
+  --color-note: var(--note);
+  --color-note-soft: var(--note-soft);
+  --color-note-border: var(--note-border);
   --color-chan-whatsapp: var(--chan-whatsapp);
   --color-chan-webchat: var(--chan-webchat);
   --color-chan-email: var(--chan-email);
@@ -113,6 +118,11 @@
   --status-resolvido-soft: oklch(0.945 0.05 155);
   --status-negado: oklch(0.52 0.19 25);
   --status-negado-soft: oklch(0.95 0.035 25);
+  --status-mesclado: oklch(0.5 0.01 260);
+  --status-mesclado-soft: oklch(0.94 0.004 260);
+  --note: oklch(0.45 0.1 75);
+  --note-soft: oklch(0.965 0.045 85);
+  --note-border: oklch(0.88 0.07 85);
   --chan-whatsapp: oklch(0.58 0.15 150);
   --chan-webchat: oklch(0.55 0.16 275);
   --chan-email: oklch(0.58 0.12 250);
@@ -165,6 +175,11 @@
   --status-resolvido-soft: oklch(0.3 0.06 155);
   --status-negado: oklch(0.72 0.16 25);
   --status-negado-soft: oklch(0.32 0.07 25);
+  --status-mesclado: oklch(0.75 0.01 260);
+  --status-mesclado-soft: oklch(0.32 0.005 260);
+  --note: oklch(0.85 0.1 85);
+  --note-soft: oklch(0.32 0.06 75);
+  --note-border: oklch(0.42 0.07 75);
   --chan-whatsapp: oklch(0.75 0.15 150);
   --chan-webchat: oklch(0.72 0.15 275);
   --chan-email: oklch(0.75 0.11 250);

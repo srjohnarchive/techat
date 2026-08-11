@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Building2, Mail, Phone, Briefcase } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app-shell";
-import { ChannelIcon, StatusTag, Initials } from "@/components/atoms";
-import { contacts, getCompany, contactTickets } from "@/lib/mock-data";
+import { ChannelIcon, Initials } from "@/components/atoms";
+import { Field, TicketTable, useTicketsOfContact } from "@/components/panels";
+import { useApp } from "@/lib/app-state";
+import { CHANNEL_LABEL, contacts, getCompany } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/contatos/$contactId")({
   loader: ({ params }) => {
@@ -19,8 +21,9 @@ export const Route = createFileRoute("/contatos/$contactId")({
         ],
       };
     }
+    const company = getCompany(loaderData.contact.companyId);
     const title = `${loaderData.contact.name} — ficha do contato | Central Omni`;
-    const description = `Dados e histórico completo de atendimentos de ${loaderData.contact.name}, da empresa ${getCompany(loaderData.contact.companyId).name}.`;
+    const description = `Dados, identificadores e histórico de atendimentos de ${loaderData.contact.name}${company ? `, da empresa ${company.name}` : ""}.`;
     return {
       meta: [
         { title },
@@ -35,14 +38,16 @@ export const Route = createFileRoute("/contatos/$contactId")({
 
 function ContactDetail() {
   const { contact } = Route.useLoaderData();
+  const { conversations } = useApp();
   const company = getCompany(contact.companyId);
-  const tickets = contactTickets(contact.id);
+  const items = useTicketsOfContact(contact.id);
+  const convs = conversations.filter((c) => c.contactId === contact.id);
 
   return (
     <AppShell>
       <PageHeader
         title={contact.name}
-        subtitle={`${contact.role} · ${company.name}`}
+        subtitle={`${contact.role}${company ? ` · ${company.name}` : ""}`}
         action={
           <Link
             to="/contatos"
@@ -60,71 +65,77 @@ function ContactDetail() {
             <p className="text-xs text-muted-foreground">{contact.role}</p>
           </div>
           <dl className="mt-5 space-y-3">
-            <Row icon={Phone} label="Telefone" value={contact.phone} />
-            <Row icon={Mail} label="E-mail" value={contact.email} />
-            <Row icon={Building2} label="Empresa" value={company.name} />
-            <Row icon={Briefcase} label="Segmento" value={company.segment} />
+            <Field icon={Phone} label="Telefone" value={contact.phone} />
+            <Field icon={Mail} label="E-mail" value={contact.email} />
+            <Field
+              icon={Building2}
+              label="Empresa"
+              value={company ? `${company.name} · ${company.cnpj}` : "Não vinculada"}
+            />
+            <Field
+              icon={Briefcase}
+              label="Segmento"
+              value={company?.segment ?? "—"}
+            />
           </dl>
+          {company && (
+            <Link
+              to="/empresas"
+              className="mt-3 inline-block text-xs font-medium text-brand hover:underline"
+            >
+              Ver empresa
+            </Link>
+          )}
+
+          <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Identificadores adicionais
+          </h3>
+          <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+            {contact.altPhone && <li>Telefone: {contact.altPhone}</li>}
+            {contact.altEmail && <li>E-mail: {contact.altEmail}</li>}
+            {!contact.altPhone && !contact.altEmail && <li>Nenhum cadastrado.</li>}
+          </ul>
         </section>
 
-        <section>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Histórico de tickets ({tickets.length})
-          </h2>
-          <div className="overflow-hidden rounded-xl border border-border bg-surface">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Ticket</th>
-                  <th className="px-4 py-3 font-medium">Assunto</th>
-                  <th className="px-4 py-3 font-medium">Canal</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Data</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tickets.map((t) => (
-                  <tr key={t.id} className="border-t border-border">
-                    <td className="px-4 py-3 font-medium">{t.id}</td>
-                    <td className="max-w-0 px-4 py-3">
-                      <span className="block truncate">{t.subject}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <ChannelIcon channel={t.channel} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusTag status={t.status} />
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                      {t.date}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <section className="space-y-6">
+          <div>
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Histórico de tickets ({items.length})
+            </h2>
+            <TicketTable items={items} />
+          </div>
+
+          <div>
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Conversas por canal ({convs.length})
+            </h2>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {convs.map((cv) => (
+                <li
+                  key={cv.id}
+                  className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3"
+                >
+                  <ChannelIcon channel={cv.channel} />
+                  <span className="min-w-0 flex-1 text-xs">
+                    <span className="block text-sm font-medium">
+                      {CHANNEL_LABEL[cv.channel]}
+                    </span>
+                    <span className="text-muted-foreground">
+                      Ticket ativo #{cv.activeTicketId} · {cv.lastActivity}
+                    </span>
+                  </span>
+                  <Link
+                    to="/"
+                    className="rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"
+                  >
+                    Abrir
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       </div>
     </AppShell>
-  );
-}
-
-function Row({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Mail;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-start gap-2.5">
-      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-      <div className="min-w-0">
-        <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</dt>
-        <dd className="truncate text-sm">{value}</dd>
-      </div>
-    </div>
   );
 }
