@@ -16,7 +16,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TicketTable } from "@/components/panels";
 import { useApp } from "@/lib/app-state";
-import { companies, contacts, getContact } from "@/lib/mock-data";
+import { companies, contacts, getContact, getGroup, groups } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/empresas")({
   head: () => ({
@@ -42,6 +42,11 @@ function CompaniesPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [formTitle, setFormTitle] = useState("Nova empresa");
+  const [groupFilter, setGroupFilter] = useState<string>("all");
+  const sections = [
+    ...groups.map((g) => ({ key: g.id, title: g.name, sub: g.erpSystem, items: companies.filter((c) => c.groupId === g.id) })),
+    { key: "none", title: "Sem grupo empresarial", sub: "Empresas independentes", items: companies.filter((c) => !c.groupId) },
+  ].filter((s) => s.items.length && (groupFilter === "all" || groupFilter === s.key));
 
   const company = companies.find((c) => c.id === selected);
   const people = contacts.filter((c) => c.companyId === selected);
@@ -66,7 +71,24 @@ function CompaniesPage() {
           </Button>
         }
       />
-      <div className="min-h-0 flex-1 overflow-auto p-6">
+      <div className="min-h-0 flex-1 space-y-5 overflow-auto p-6">
+        <div className="flex flex-wrap gap-2">
+          {[{ id: "all", name: "Todos" }, ...groups, { id: "none", name: "Sem grupo" }].map((g) => (
+            <button
+              key={g.id}
+              onClick={() => setGroupFilter(g.id)}
+              className={`rounded-full border px-3 py-1 text-sm ${groupFilter === g.id ? "border-brand bg-brand-soft text-brand" : "border-border text-muted-foreground hover:bg-accent"}`}
+            >
+              {g.name}
+            </button>
+          ))}
+        </div>
+        {sections.map((sec) => (
+        <section key={sec.key} className="space-y-2">
+          <div>
+            <h2 className="text-sm font-semibold">{sec.title} <span className="font-normal text-muted-foreground">· {sec.items.length} empresa(s)</span></h2>
+            <p className="text-xs text-muted-foreground">{sec.sub}</p>
+          </div>
         <div className="overflow-hidden rounded-xl border border-border bg-surface">
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
@@ -79,7 +101,7 @@ function CompaniesPage() {
               </tr>
             </thead>
             <tbody>
-              {companies.map((c) => {
+              {sec.items.map((c) => {
                 const count = contacts.filter((p) => p.companyId === c.id).length;
                 const open = tickets.filter(
                   (t) =>
@@ -113,6 +135,8 @@ function CompaniesPage() {
             </tbody>
           </table>
         </div>
+        </section>
+        ))}
       </div>
 
       <Sheet open={!!selected} onOpenChange={(v) => !v && setSelected(null)}>
@@ -126,6 +150,7 @@ function CompaniesPage() {
                 <div>
                   <p className="text-muted-foreground">CNPJ {company.cnpj}</p>
                   <p className="text-muted-foreground">{company.segment}</p>
+                  <p className="text-muted-foreground">Grupo: {getGroup(company.groupId)?.name ?? "—"}</p>
                 </div>
                 <Button
                   size="sm"

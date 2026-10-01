@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as EmpresasRouteImport } from './routes/empresas'
 import { Route as PendenciasRouteImport } from './routes/pendencias'
+import { Route as RelatoriosRouteImport } from './routes/relatorios'
 import { Route as ContatosIndexRouteImport } from './routes/contatos.index'
 import { Route as ContatosContactIdRouteImport } from './routes/contatos.$contactId'
 
@@ -36,6 +37,11 @@ const PendenciasRoute = PendenciasRouteImport.update({
   path: '/pendencias',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RelatoriosRoute = RelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContatosIndexRoute = ContatosIndexRouteImport.update({
   id: '/contatos/',
   path: '/contatos/',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/empresas': typeof EmpresasRoute
   '/pendencias': typeof PendenciasRoute
+  '/relatorios': typeof RelatoriosRoute
   '/contatos/$contactId': typeof ContatosContactIdRoute
   '/contatos/': typeof ContatosIndexRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/empresas': typeof EmpresasRoute
   '/pendencias': typeof PendenciasRoute
+  '/relatorios': typeof RelatoriosRoute
   '/contatos/$contactId': typeof ContatosContactIdRoute
   '/contatos': typeof ContatosIndexRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/empresas': typeof EmpresasRoute
   '/pendencias': typeof PendenciasRoute
+  '/relatorios': typeof RelatoriosRoute
   '/contatos/$contactId': typeof ContatosContactIdRoute
   '/contatos/': typeof ContatosIndexRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/empresas'
     | '/pendencias'
+    | '/relatorios'
     | '/contatos/$contactId'
     | '/contatos/'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/empresas'
     | '/pendencias'
+    | '/relatorios'
     | '/contatos/$contactId'
     | '/contatos'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/empresas'
     | '/pendencias'
+    | '/relatorios'
     | '/contatos/$contactId'
     | '/contatos/'
   fileRoutesById: FileRoutesById
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   EmpresasRoute: typeof EmpresasRoute
   PendenciasRoute: typeof PendenciasRoute
+  RelatoriosRoute: typeof RelatoriosRoute
   ContatosContactIdRoute: typeof ContatosContactIdRoute
   ContatosIndexRoute: typeof ContatosIndexRoute
 }
@@ -138,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PendenciasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/relatorios': {
+      id: '/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof RelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contatos/': {
       id: '/contatos/'
       path: '/contatos'
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   EmpresasRoute: EmpresasRoute,
   PendenciasRoute: PendenciasRoute,
+  RelatoriosRoute: RelatoriosRoute,
   ContatosContactIdRoute: ContatosContactIdRoute,
   ContatosIndexRoute: ContatosIndexRoute,
 }
