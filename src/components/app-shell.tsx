@@ -1,23 +1,57 @@
+import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Inbox, Building2, Users, BarChart3, Headset, ListChecks } from "lucide-react";
+import {
+  Inbox,
+  Building2,
+  Users,
+  BarChart3,
+  Headset,
+  ListChecks,
+  FileBarChart,
+  Moon,
+  Sun,
+  Plus,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Initials } from "@/components/atoms";
+import { NewTaskDialog } from "@/components/new-task-dialog";
 
 const nav = [
   { to: "/", label: "Caixa de Entrada", icon: Inbox, exact: true },
   { to: "/pendencias", label: "Pendências", icon: ListChecks, exact: false },
   { to: "/empresas", label: "Empresas", icon: Building2, exact: false },
   { to: "/contatos", label: "Contatos", icon: Users, exact: false },
+  { to: "/relatorios", label: "Relatórios", icon: FileBarChart, exact: false },
   { to: "/admin", label: "Administração", icon: BarChart3, exact: false },
 ] as const;
 
+function useTheme() {
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    setDark(localStorage.getItem("techat-theme") === "dark");
+  }, []);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+  }, [dark]);
+  return {
+    dark,
+    toggle: () =>
+      setDark((d) => {
+        localStorage.setItem("techat-theme", d ? "light" : "dark");
+        return !d;
+      }),
+  };
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { dark, toggle } = useTheme();
+  const [newOpen, setNewOpen] = useState(false);
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
       <aside className="flex w-16 shrink-0 flex-col items-center gap-2 border-r border-border bg-sidebar py-4 lg:w-60 lg:items-stretch lg:px-3">
-        <div className="mb-4 flex items-center gap-2 px-1 lg:px-2">
+        <div className="mb-3 flex items-center gap-2 px-1 lg:px-2">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand text-brand-foreground">
             <Headset className="h-5 w-5" />
           </span>
@@ -27,11 +61,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </span>
         </div>
 
+        <button
+          onClick={() => setNewOpen(true)}
+          title="Novo ticket / tarefa"
+          className="mb-2 flex items-center justify-center gap-2 rounded-lg bg-brand px-2 py-2.5 text-sm font-medium text-brand-foreground transition-opacity hover:opacity-90"
+        >
+          <Plus className="h-[18px] w-[18px]" />
+          <span className="hidden lg:inline">Novo ticket / tarefa</span>
+        </button>
+
         <nav className="flex flex-1 flex-col gap-1">
           {nav.map((item) => {
-            const active = item.exact
-              ? pathname === item.to
-              : pathname.startsWith(item.to);
+            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
             return (
               <Link
                 key={item.to}
@@ -51,6 +92,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
+        <button
+          onClick={toggle}
+          title={dark ? "Modo claro" : "Modo noturno"}
+          className="flex items-center justify-center gap-3 rounded-lg px-2 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground lg:justify-start lg:px-3"
+        >
+          {dark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
+          <span className="hidden lg:inline">{dark ? "Modo claro" : "Modo noturno"}</span>
+        </button>
+
         <div className="flex items-center gap-2 border-t border-border pt-3 lg:px-1">
           <Initials name="Luísa Campos" />
           <span className="hidden min-w-0 flex-col lg:flex">
@@ -61,6 +111,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col overflow-hidden">{children}</main>
+      <NewTaskDialog open={newOpen} onOpenChange={setNewOpen} />
     </div>
   );
 }
@@ -78,9 +129,7 @@ export function PageHeader({
     <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-border bg-surface px-6 py-4">
       <div className="min-w-0">
         <h1 className="truncate text-lg font-semibold">{title}</h1>
-        {subtitle && (
-          <p className="truncate text-sm text-muted-foreground">{subtitle}</p>
-        )}
+        {subtitle && <p className="truncate text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
     </header>
