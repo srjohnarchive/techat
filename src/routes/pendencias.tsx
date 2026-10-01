@@ -24,13 +24,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/pendencias")({
   head: () => ({
     meta: [
-      { title: "Central de pendências — Central Omni" },
+      { title: "Central de pendências — Techat" },
       {
         name: "description",
         content:
           "Gestão assíncrona dos tickets abertos e pendentes em lista ou kanban pessoal, sem alterar o status oficial.",
       },
-      { property: "og:title", content: "Central de pendências — Central Omni" },
+      { property: "og:title", content: "Central de pendências — Techat" },
       {
         property: "og:description",
         content: "Organize os tickets pendentes em colunas personalizadas ou em lista.",

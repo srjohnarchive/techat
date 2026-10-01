@@ -39,13 +39,13 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Administração e métricas — Central Omni" },
+      { title: "Administração e métricas — Techat" },
       {
         name: "description",
         content:
           "Visão do gestor: usuários, canais conectados, métricas de atendimento por status e canal e trilha de auditoria.",
       },
-      { property: "og:title", content: "Administração e métricas — Central Omni" },
+      { property: "og:title", content: "Administração e métricas — Techat" },
       {
         property: "og:description",
         content: "Gerencie usuários, canais e acompanhe as métricas do atendimento.",

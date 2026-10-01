@@ -16,13 +16,13 @@ export const Route = createFileRoute("/contatos/$contactId")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Contato indisponível — Central Omni" },
+          { title: "Contato indisponível — Techat" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
     const company = getCompany(loaderData.contact.companyId);
-    const title = `${loaderData.contact.name} — ficha do contato | Central Omni`;
+    const title = `${loaderData.contact.name} — ficha do contato | Techat`;
     const description = `Dados, identificadores e histórico de atendimentos de ${loaderData.contact.name}${company ? `, da empresa ${company.name}` : ""}.`;
     return {
       meta: [
