@@ -36,6 +36,15 @@ type AppActions = {
     text: string,
     mode: "reply" | "note",
   ) => void;
+  addTask: (input: {
+    subject: string;
+    contactId: string;
+    agent: string;
+    kind: "ticket" | "tarefa";
+    priority: "baixa" | "media" | "alta" | "urgente";
+    dueDate?: string;
+    channel: Ticket["channel"];
+  }) => string;
   transfer: (ticketId: string, agent: string) => void;
   markRead: (conversationId: string) => void;
   moveTicketToColumn: (ticketId: string, columnId: string | null) => void;
@@ -235,6 +244,30 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  const addTask = useCallback<AppActions["addTask"]>((input) => {
+    const id = String(2000 + Math.floor(Math.random() * 7000));
+    setTickets((prev) => [
+      {
+        id,
+        subject: input.subject,
+        contactId: input.contactId,
+        channel: input.channel,
+        status: "aberto",
+        agent: input.agent,
+        openedAt: "01/10/2026",
+        updatedAt: "agora",
+        waiting: "agora",
+        kanbanColumn: null,
+        kind: input.kind,
+        priority: input.priority,
+        dueDate: input.dueDate || undefined,
+        createdBy: CURRENT_AGENT,
+      },
+      ...prev,
+    ]);
+    return id;
+  }, []);
+
   const transfer = useCallback(
     (ticketId: string, agent: string) => {
       setTickets((prev) =>
@@ -299,6 +332,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       switchActiveTicket,
       createTicket,
       sendMessage,
+      addTask,
       transfer,
       markRead,
       moveTicketToColumn,
@@ -318,6 +352,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       switchActiveTicket,
       createTicket,
       sendMessage,
+      addTask,
       transfer,
       markRead,
       moveTicketToColumn,

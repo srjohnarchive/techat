@@ -36,8 +36,20 @@ export const CHANNEL_LABEL: Record<Channel, string> = {
 
 export const CHANNELS: Channel[] = ["whatsapp", "webchat", "email"];
 
+export type BusinessGroup = { id: string; name: string; erpSystem: string };
+
+export const groups: BusinessGroup[] = [
+  { id: "g1", name: "Grupo Vertex", erpSystem: "ERP Vertex · base única" },
+  { id: "g2", name: "Holding Auroria", erpSystem: "ERP Auroria · multiempresa" },
+];
+
+export function getGroup(id: string | null | undefined) {
+  return groups.find((g) => g.id === id);
+}
+
 export type Company = {
   id: string;
+  groupId?: string | null | undefined;
   name: string;
   cnpj: string;
   segment: string;
@@ -68,6 +80,10 @@ export type Ticket = {
   updatedAt: string;
   waiting: string;
   kanbanColumn?: string | null | undefined;
+  kind?: "ticket" | "tarefa" | undefined;
+  priority?: "baixa" | "media" | "alta" | "urgente" | undefined;
+  dueDate?: string | undefined;
+  createdBy?: string | undefined;
   mergedInto?: string | undefined;
 };
 
@@ -99,6 +115,7 @@ export type Conversation = {
 export const companies: Company[] = [
   {
     id: "c1",
+    groupId: "g1",
     name: "Vertex Logística",
     cnpj: "12.345.678/0001-90",
     segment: "Transportes",
@@ -106,6 +123,7 @@ export const companies: Company[] = [
   },
   {
     id: "c2",
+    groupId: "g2",
     name: "Auroria Cosméticos",
     cnpj: "23.456.789/0001-70",
     segment: "Varejo",
@@ -120,10 +138,27 @@ export const companies: Company[] = [
   },
   {
     id: "c4",
+    groupId: "g1",
     name: "Casa Bonita Móveis",
     cnpj: "45.678.901/0001-32",
     segment: "Indústria",
     lastInteraction: "ontem",
+  },
+  {
+    id: "c5",
+    groupId: "g1",
+    name: "Vertex Armazéns Filial MT",
+    cnpj: "12.345.678/0002-71",
+    segment: "Transportes",
+    lastInteraction: "há 3 dias",
+  },
+  {
+    id: "c6",
+    groupId: "g2",
+    name: "Auroria Distribuidora",
+    cnpj: "23.456.789/0002-51",
+    segment: "Atacado",
+    lastInteraction: "semana passada",
   },
 ];
 
