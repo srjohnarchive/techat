@@ -53,13 +53,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Caixa de entrada unificada — Central Omni" },
+      { title: "Caixa de entrada unificada — Techat" },
       {
         name: "description",
         content:
           "Atenda WhatsApp, Webchat e E-mail em uma única tela, com tickets, sessões e notas internas na mesma timeline.",
       },
-      { property: "og:title", content: "Caixa de entrada unificada — Central Omni" },
+      { property: "og:title", content: "Caixa de entrada unificada — Techat" },
       {
         property: "og:description",
         content:

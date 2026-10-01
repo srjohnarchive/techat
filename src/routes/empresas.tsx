@@ -21,13 +21,13 @@ import { companies, contacts, getContact } from "@/lib/mock-data";
 export const Route = createFileRoute("/empresas")({
   head: () => ({
     meta: [
-      { title: "Empresas atendidas — Central Omni" },
+      { title: "Empresas atendidas — Techat" },
       {
         name: "description",
         content:
           "Empresas cadastradas com CNPJ, contatos vinculados, tickets abertos e histórico consolidado de atendimentos.",
       },
-      { property: "og:title", content: "Empresas atendidas — Central Omni" },
+      { property: "og:title", content: "Empresas atendidas — Techat" },
       {
         property: "og:description",
         content: "Veja empresas, contatos vinculados e o histórico de tickets de cada uma.",

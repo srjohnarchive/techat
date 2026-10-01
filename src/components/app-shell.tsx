@@ -22,7 +22,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Headset className="h-5 w-5" />
           </span>
           <span className="hidden min-w-0 flex-col lg:flex">
-            <span className="truncate text-sm font-semibold">Central Omni</span>
+            <span className="truncate text-sm font-semibold">Techat</span>
             <span className="truncate text-xs text-muted-foreground">Atendimento</span>
           </span>
         </div>
