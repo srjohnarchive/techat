@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { CheckCircle2, Inbox } from "lucide-react";
 import {
   AlertTriangle,
   Building2,
@@ -41,6 +42,7 @@ import { useApp } from "@/lib/app-state";
 import {
   CHANNELS,
   CHANNEL_LABEL,
+  CURRENT_AGENT,
   QUEUE_STATUSES,
   STATUS_LABEL,
   getCompany,
@@ -75,7 +77,7 @@ function InboxPage() {
 
   const [selectedId, setSelectedId] = useState(conversations[0]!.id);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<TicketStatus[]>([]);
+  const [scope, setScope] = useState<"meus" | "todos">("meus");
   const [channelFilter, setChannelFilter] = useState<Channel[]>([]);
   const [contextOpen, setContextOpen] = useState(true);
   const [ticketDrawer, setTicketDrawer] = useState(false);
@@ -99,7 +101,17 @@ function InboxPage() {
     [conversations, tickets, messages],
   );
 
-  const filtered = rows.filter(({ contact, company, ticket }) => {
+  // Caixa de entrada mostra só os atendimentos ativos (em_atendimento) do responsável.
+  const active = rows.filter(
+    ({ ticket }) =>
+      ticket.status === "em_atendimento" &&
+      (scope === "todos" || ticket.agent === CURRENT_AGENT),
+  );
+  const waitingCount = tickets.filter(
+    (t) => t.status === "aberto" || t.status === "pendente",
+  ).length;
+
+  const filtered = active.filter(({ contact, company, ticket }) => {
     const q = search.trim().toLowerCase();
     const matchQ =
       !q ||
@@ -107,14 +119,14 @@ function InboxPage() {
       (company?.name.toLowerCase().includes(q) ?? false) ||
       ticket.id.includes(q.replace("#", "")) ||
       ticket.subject.toLowerCase().includes(q);
-    const matchStatus =
-      statusFilter.length === 0 || statusFilter.includes(ticket.status);
     const matchChannel =
       channelFilter.length === 0 || channelFilter.includes(ticket.channel);
-    return matchQ && matchStatus && matchChannel;
+    return matchQ && matchChannel;
   });
 
-  const current = rows.find((r) => r.cv.id === selectedId)!;
+  const selectedActive = active.find((r) => r.cv.id === selectedId) ?? active[0];
+  const current = selectedActive ?? rows.find((r) => r.cv.id === selectedId) ?? rows[0]!;
+  const showChat = Boolean(selectedActive);
   const timeline = messages.filter((m) => m.conversationId === current.cv.id);
   const contactTickets = useTicketsOfContact(current.contact.id);
   const companyTickets = useTicketsOfCompany(current.contact.companyId);
@@ -149,22 +161,33 @@ function InboxPage() {
                 <MessageSquarePlus className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {QUEUE_STATUSES.map((s) => (
+            <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+              {(["meus", "todos"] as const).map((s) => (
                 <button
                   key={s}
-                  onClick={() => toggle(statusFilter, s, setStatusFilter)}
+                  onClick={() => setScope(s)}
                   className={cn(
-                    "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
-                    statusFilter.includes(s)
-                      ? "border-brand bg-brand-soft text-brand"
-                      : "border-border text-muted-foreground hover:bg-accent",
+                    "rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
+                    scope === s
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  {STATUS_LABEL[s]}
+                  {s === "meus" ? "Meus atendimentos" : "Todos em atendimento"}
                 </button>
               ))}
             </div>
+            <Link
+              to="/pendencias"
+              className="flex items-center justify-between rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground hover:bg-accent"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Inbox className="h-3.5 w-3.5" /> Abertos e aguardando retorno
+              </span>
+              <span className="rounded-full bg-brand-soft px-2 py-0.5 font-semibold text-brand">
+                {waitingCount}
+              </span>
+            </Link>
             <div className="grid grid-cols-3 gap-1.5">
               {CHANNELS.map((ch) => (
                 <button
@@ -244,10 +267,25 @@ function InboxPage() {
         {/* Coluna 2 + 3 */}
         <div
           className={cn(
-            "grid min-h-0",
+            "relative grid min-h-0",
             contextOpen ? "xl:grid-cols-[minmax(0,1fr)_320px]" : "grid-cols-1",
           )}
         >
+          {!showChat && (
+            <div className="absolute inset-0 z-20 grid place-items-center bg-background p-6 text-center">
+              <div className="max-w-sm space-y-3">
+                <CheckCircle2 className="mx-auto h-10 w-10 text-brand" />
+                <p className="text-base font-semibold">Tudo em dia!</p>
+                <p className="text-sm text-muted-foreground">
+                  Nenhuma conversa em atendimento agora. Os contatos em aberto ou
+                  aguardando retorno ficam na Central de Pendências.
+                </p>
+                <Button asChild>
+                  <Link to="/pendencias">Ver pendências ({waitingCount})</Link>
+                </Button>
+              </div>
+            </div>
+          )}
           <section className="flex min-h-0 flex-col">
             <header className="flex flex-wrap items-center gap-2 border-b border-border bg-surface px-4 py-3 sm:px-6">
               <Initials name={current.contact.name} />
