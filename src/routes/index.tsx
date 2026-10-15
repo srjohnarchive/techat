@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { CheckCircle2, Inbox } from "lucide-react";
 import {
   AlertTriangle,
   Building2,
@@ -41,6 +42,7 @@ import { useApp } from "@/lib/app-state";
 import {
   CHANNELS,
   CHANNEL_LABEL,
+  CURRENT_AGENT,
   QUEUE_STATUSES,
   STATUS_LABEL,
   getCompany,
@@ -159,22 +161,33 @@ function InboxPage() {
                 <MessageSquarePlus className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {QUEUE_STATUSES.map((s) => (
+            <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+              {(["meus", "todos"] as const).map((s) => (
                 <button
                   key={s}
-                  onClick={() => toggle(statusFilter, s, setStatusFilter)}
+                  onClick={() => setScope(s)}
                   className={cn(
-                    "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
-                    statusFilter.includes(s)
-                      ? "border-brand bg-brand-soft text-brand"
-                      : "border-border text-muted-foreground hover:bg-accent",
+                    "rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
+                    scope === s
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  {STATUS_LABEL[s]}
+                  {s === "meus" ? "Meus atendimentos" : "Todos em atendimento"}
                 </button>
               ))}
             </div>
+            <Link
+              to="/pendencias"
+              className="flex items-center justify-between rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground hover:bg-accent"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <Inbox className="h-3.5 w-3.5" /> Abertos e aguardando retorno
+              </span>
+              <span className="rounded-full bg-brand-soft px-2 py-0.5 font-semibold text-brand">
+                {waitingCount}
+              </span>
+            </Link>
             <div className="grid grid-cols-3 gap-1.5">
               {CHANNELS.map((ch) => (
                 <button
