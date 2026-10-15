@@ -75,7 +75,7 @@ function InboxPage() {
 
   const [selectedId, setSelectedId] = useState(conversations[0]!.id);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<TicketStatus[]>([]);
+  const [scope, setScope] = useState<"meus" | "todos">("meus");
   const [channelFilter, setChannelFilter] = useState<Channel[]>([]);
   const [contextOpen, setContextOpen] = useState(true);
   const [ticketDrawer, setTicketDrawer] = useState(false);
@@ -99,7 +99,17 @@ function InboxPage() {
     [conversations, tickets, messages],
   );
 
-  const filtered = rows.filter(({ contact, company, ticket }) => {
+  // Caixa de entrada mostra só os atendimentos ativos (em_atendimento) do responsável.
+  const active = rows.filter(
+    ({ ticket }) =>
+      ticket.status === "em_atendimento" &&
+      (scope === "todos" || ticket.agent === CURRENT_AGENT),
+  );
+  const waitingCount = tickets.filter(
+    (t) => t.status === "aberto" || t.status === "pendente",
+  ).length;
+
+  const filtered = active.filter(({ contact, company, ticket }) => {
     const q = search.trim().toLowerCase();
     const matchQ =
       !q ||
@@ -107,14 +117,14 @@ function InboxPage() {
       (company?.name.toLowerCase().includes(q) ?? false) ||
       ticket.id.includes(q.replace("#", "")) ||
       ticket.subject.toLowerCase().includes(q);
-    const matchStatus =
-      statusFilter.length === 0 || statusFilter.includes(ticket.status);
     const matchChannel =
       channelFilter.length === 0 || channelFilter.includes(ticket.channel);
-    return matchQ && matchStatus && matchChannel;
+    return matchQ && matchChannel;
   });
 
-  const current = rows.find((r) => r.cv.id === selectedId)!;
+  const selectedActive = active.find((r) => r.cv.id === selectedId) ?? active[0];
+  const current = selectedActive ?? rows.find((r) => r.cv.id === selectedId) ?? rows[0]!;
+  const showChat = Boolean(selectedActive);
   const timeline = messages.filter((m) => m.conversationId === current.cv.id);
   const contactTickets = useTicketsOfContact(current.contact.id);
   const companyTickets = useTicketsOfCompany(current.contact.companyId);
