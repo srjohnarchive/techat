@@ -267,10 +267,25 @@ function InboxPage() {
         {/* Coluna 2 + 3 */}
         <div
           className={cn(
-            "grid min-h-0",
+            "relative grid min-h-0",
             contextOpen ? "xl:grid-cols-[minmax(0,1fr)_320px]" : "grid-cols-1",
           )}
         >
+          {!showChat && (
+            <div className="absolute inset-0 z-20 grid place-items-center bg-background p-6 text-center">
+              <div className="max-w-sm space-y-3">
+                <CheckCircle2 className="mx-auto h-10 w-10 text-brand" />
+                <p className="text-base font-semibold">Tudo em dia!</p>
+                <p className="text-sm text-muted-foreground">
+                  Nenhuma conversa em atendimento agora. Os contatos em aberto ou
+                  aguardando retorno ficam na Central de Pendências.
+                </p>
+                <Button asChild>
+                  <Link to="/pendencias">Ver pendências ({waitingCount})</Link>
+                </Button>
+              </div>
+            </div>
+          )}
           <section className="flex min-h-0 flex-col">
             <header className="flex flex-wrap items-center gap-2 border-b border-border bg-surface px-4 py-3 sm:px-6">
               <Initials name={current.contact.name} />
